@@ -2,9 +2,9 @@ Deno.env.set("PUPPETEER_PRODUCT", "chrome")
 import puppeteer from "https://deno.land/x/puppeteer@9.0.2/mod.ts"
 import "https://deno.land/x/puppeteer@9.0.2/install.ts "
 
-export const wordleURL = "https://www.nytimes.com/games/wordle/index.html"
+const wordleURL = "https://www.nytimes.com/games/wordle/index.html"
 
-export const solve = async (): Promise<string> => {
+const solveWithScreenShot = async (): Promise<string> => {
     const browser = await puppeteer.launch()
     const page = await browser.newPage()
     await page.goto(wordleURL)
@@ -20,7 +20,22 @@ export const solve = async (): Promise<string> => {
 
     const answer = state.solution
 
+    // click body to close popup
+    await page.click("body")
+
+    // enter the answer
+    await page.type("body", answer)
+    await page.keyboard.down("Enter")
+
+    // wait a few seconds and take a screenshot
+    await page.waitForTimeout(3000)
+    await page.screenshot({ path: `./wordle-${Date.toString}.png` })
+
     await browser.close()
 
     return answer
 }
+
+// Let's solve!
+const answer = await solveWithScreenShot()
+console.log(`The answer is ${answer}`)
