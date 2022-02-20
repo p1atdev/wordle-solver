@@ -37,6 +37,8 @@ async function handler(req: Request): Promise<Response> {
 }
 
 const solve = async (): Promise<string> => {
+    console.log("Solving...")
+
     const browser = await puppeteer.launch()
     const page = await browser.newPage()
     await page.goto(wordleURL)
