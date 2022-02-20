@@ -1,27 +1,52 @@
 import { serve } from "https://deno.land/std@0.125.0/http/server.ts"
 import { Status, STATUS_TEXT } from "https://deno.land/std@0.125.0/http/http_status.ts"
-import { solve } from "./wordle.ts"
+import { getAnswer, getGameNumber } from "./wordle.ts"
 
-serve(handler, { port: 3000 })
+serve(handler, { port: 80 })
 
-console.log("Wordle solver is on http://localhost:3000/")
+console.log("Wordle solver is on http://localhost:80/")
 
-async function handler(req: Request): Promise<Response> {
+function handler(req: Request): Response {
+    // async function handler(req: Request): Promise<Response> {
     const url = new URL(req.url)
     const path = url.pathname
     console.log("Path:", path)
 
     switch (path) {
-        case "/solve": {
-            const answer = await solve()
+        case "/answer": {
+            try {
+                console.log(url.searchParams.get("date"))
+                const paramDate = url.searchParams.get("date")
 
-            if (answer) {
-                return new Response(JSON.stringify({ answer: answer }), {
+                const date = paramDate ? new Date(paramDate!) : new Date()
+
+                const answer = getAnswer(date)
+                const gameNumber = getGameNumber(date)
+
+                const body = JSON.stringify({
+                    gameNumber: gameNumber,
+                    answer: answer,
+                })
+                return new Response(body, {
                     status: Status.OK,
                     headers: new Headers({
                         "content-type": "application/json",
                     }),
                 })
+            } catch (err) {
+                return new Response(
+                    JSON.stringify({
+                        code: Status.BadRequest,
+                        description: STATUS_TEXT.get(Status.BadRequest),
+                        message: err,
+                    }),
+                    {
+                        status: Status.NotFound,
+                        headers: new Headers({
+                            "content-type": "text/plain",
+                        }),
+                    }
+                )
             }
         }
     }
