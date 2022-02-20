@@ -6,8 +6,6 @@ export const getAnswer = (date?: Date | null): string => {
     const today = date ?? new Date()
     const diffDay = Math.floor((today.getTime() - TheDay.getTime()) / (1000 * 60 * 60 * 24))
 
-    console.log(diffDay)
-
     if (diffDay > 0 && diffDay < WordleAnswers.length) {
         const answer = WordleAnswers[diffDay]
 

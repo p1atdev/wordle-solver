@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.125.0/http/server.ts"
 import { Status, STATUS_TEXT } from "https://deno.land/std@0.125.0/http/http_status.ts"
-import { getAnswer, getGameNumber } from "./wordle.ts"
+import { getAnswer, getGameNumber } from "../wordle.ts"
 
 serve(handler, { port: 80 })
 

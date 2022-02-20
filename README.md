@@ -6,43 +6,58 @@ A wordle solver with Deno.
 
 # How to use
 Example codes are available in `/examples`!
+
 ## Basic usage
 
 ```ts
 // example.ts
 
-import { solve } from "./wordle.ts"
+import { getAnswer, getGameNumber } from "./wordle.ts"
 
-console.log("Let's solve Wordle!")
+const answer = getAnswer()
+const gameNumber = getGameNumber()
 
-const answer = await solve()
-
-console.log(`The answer is "${answer}"!`)
+console.log(`Wordle ${gameNumber}`)
+console.log(`Today's wordle answer is "${answer}"!`)
 
 ```
 
 Run `example.ts` as follows
 ```bash
-deno run --allow-net --unstable --allow-env --allow-read --allow-write --allow-run --unstable example.ts
-```
-or
-```bash
-deno run -A --unstable example.ts
+deno run example.ts
 ```
 
 The result is
 ```
-Let's solve Wordle!
-The answer is "shake"!
+Wordle 247
+Today's wordle answer is "other"!
 ```
+
+## Predicting future answers 
+I wrote "prediction", but it is almost certainly true.
+
+```ts
+// predict.ts
+
+import { getAnswer, getGameNumber } from "../wordle.ts"
+
+const targetDate = new Date(2022, 4, 1, 0, 0, 0, 0)
+
+const answer = getAnswer(targetDate)
+const gameNumber = getGameNumber(targetDate)
+
+console.log(`Wordle ${gameNumber}`)
+console.log(`Wordle answer on 4/1/2022 is "${answer}"!`)
+
+```
+
+The result is
+```
+Wordle 316
+Wordle answer on 4/1/2022 is "trash"!
+```
+
 
 # How it works
-Wordle saves the game status in localStorage.
-The value of nyt-wordle-statistics in it is as follows.
-
-```
-{"boardState":["hello","shake","","","",""],"evaluations":[["present","present","absent","absent","absent"],["correct","correct","correct","correct","correct"],null,null,null,null],"rowIndex":2,"solution":"shake","gameStatus":"WIN","lastPlayedTs":1645053407046,"lastCompletedTs":1645053407046,"restoringFromLocalStorage":null,"hardMode":false}
-```
-
-Yes, there is an answer in this.
-This wordle solver gets `solution` parameter from this by using puppeteer.
+In the main.hoge.js file of Wordle, the list of all answers is hard-coded, and the index of the game answer is equal to the difference between a particular date and today's date.
+If wordle changes its specification and generates answers in a different way than it does now, this will stop working, but the list of answers is about six years long, so you may not need to worry about it for the time being.
