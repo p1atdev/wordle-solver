@@ -1,26 +1,29 @@
-Deno.env.set("PUPPETEER_PRODUCT", "chrome")
-import puppeteer from "https://deno.land/x/puppeteer@9.0.2/mod.ts"
-import "https://deno.land/x/puppeteer@9.0.2/install.ts "
+import { WordleAnswers } from "./dictionary.ts"
 
-export const wordleURL = "https://www.nytimes.com/games/wordle/index.html"
+const TheDay = new Date(2021, 5, 19, 0, 0, 0, 0)
 
-export const solve = async (): Promise<string> => {
-    const browser = await puppeteer.launch()
-    const page = await browser.newPage()
-    await page.goto(wordleURL)
+export const getAnswer = (date?: Date | null): string => {
+    const today = date ?? new Date()
+    const diffDay = Math.floor((today.getTime() - TheDay.getTime()) / (1000 * 60 * 60 * 24))
 
-    const state = await page.evaluate(() => {
-        // get nyt-wordle-state from localStorage
-        const storageData = localStorage.getItem("nyt-wordle-state")
-        if (!storageData) {
-            throw new Error("nyt-wordle-state is not in localStorage")
-        }
-        return JSON.parse(storageData)
-    })
+    console.log(diffDay)
 
-    const answer = state.solution
+    if (diffDay > 0 && diffDay < WordleAnswers.length) {
+        const answer = WordleAnswers[diffDay]
 
-    await browser.close()
+        return answer
+    } else {
+        throw "Invalid date"
+    }
+}
 
-    return answer
+export const getGameNumber = (date?: Date | null): number => {
+    const today = date ?? new Date()
+    const diffDay = Math.floor((today.getTime() - TheDay.getTime()) / (1000 * 60 * 60 * 24))
+
+    if (diffDay > 0 && diffDay < WordleAnswers.length) {
+        return diffDay
+    } else {
+        throw "Invalid date"
+    }
 }

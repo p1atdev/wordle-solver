@@ -1,7 +1,7 @@
-import { solve } from "../wordle.ts"
+import { getAnswer, getGameNumber } from "../wordle.ts"
 
-console.log("Let's solve Wordle!")
+const answer = getAnswer()
+const gameNumber = getGameNumber()
 
-const answer = await solve()
-
-console.log(`The answer is "${answer}"!`)
+console.log(`Wordle ${gameNumber}`)
+console.log(`Today's wordle answer is "${answer}"!`)
