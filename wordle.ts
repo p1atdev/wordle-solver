@@ -1,9 +1,8 @@
-import { serve } from "https://deno.land/std@0.125.0/http/server.ts"
-import { Status, STATUS_TEXT } from "https://deno.land/std@0.125.0/http/http_status.ts"
+Deno.env.set("PUPPETEER_PRODUCT", "chrome")
 import puppeteer from "https://deno.land/x/puppeteer@9.0.2/mod.ts"
 import "https://deno.land/x/puppeteer@9.0.2/install.ts "
 
-const wordleURL = "https://www.nytimes.com/games/wordle/index.html"
+export const wordleURL = "https://www.nytimes.com/games/wordle/index.html"
 
 serve(handler, { port: 80 })
 
@@ -47,15 +46,10 @@ const solve = async (): Promise<string> => {
         // get nyt-wordle-state from localStorage
         const storageData = localStorage.getItem("nyt-wordle-state")
         if (!storageData) {
-            return { message: "nyt-wordle-state is not in localStorage" }
+            throw new Error("nyt-wordle-state is not in localStorage")
         }
-
         return JSON.parse(storageData)
     })
-
-    console.log(`The answer is "${state.solution}"`)
-
-    await page.click("body")
 
     const answer = state.solution
 
